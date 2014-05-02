@@ -100,11 +100,11 @@ var _ga_create_params = [],
 
     {% endif %}
 
-    {% if google_analytics.hasEventQueue %}
-        ga.apply(window, _ga_create_params); //initialize tracker
+    ga.apply(window, _ga_create_params); //initialize tracker
 
-        for (it in _ga_init_queue) 
-            ga.apply(window, _ga_init_queue[it]); // run additional initializing code 
+    for (it in _ga_init_queue) ga.apply(window, _ga_init_queue[it]); // run additional initializing code 
+
+    {% if google_analytics.hasEventQueue %}
 
         {% for event in google_analytics.eventQueue %}
             AntiMattr.GoogleAnalytics.notifyEvent(
