@@ -40,7 +40,8 @@ class MapsHelper extends Helper
         return $map->render();
     }
 
-    public function getName() {
+    public function getName()
+    {
         return 'google_maps';
     }
 }

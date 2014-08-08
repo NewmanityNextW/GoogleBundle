@@ -13,6 +13,8 @@ abstract class AbstractMap implements MapInterface
     public function setId($id)
     {
 		$this->id = (string) $id;
+		
+		return $this;
 	}
 
     public function getId()
@@ -22,10 +24,7 @@ abstract class AbstractMap implements MapInterface
 
     public function hasMarkers()
     {
-		if (!empty($this->markers)) {
-			return true;
-		}
-		return false;
+		return !empty($this->markers);
 	}
 
     public function hasMarker(Marker $marker)
@@ -40,6 +39,8 @@ abstract class AbstractMap implements MapInterface
     public function addMarker(Marker $marker)
     {
 		$this->markers[] = $marker;
+
+		return $this;
 	}
 
     public function removeMarker(Marker $marker)
@@ -58,6 +59,8 @@ abstract class AbstractMap implements MapInterface
     public function setMarkers($markers)
     {
 		$this->markers = $markers;
+
+		return $this;
 	}
 
     public function getMarkers()
@@ -73,6 +76,8 @@ abstract class AbstractMap implements MapInterface
     public function setMeta(array $meta = array())
     {
 		$this->meta = $meta;
+
+		return $this;
 	}
 
     public function getMeta()

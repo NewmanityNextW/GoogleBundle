@@ -14,6 +14,8 @@ class Item
     public function setCategory($category)
     {
         $this->category = $category;
+
+        return $this;
     }
 
     public function getCategory()
@@ -24,6 +26,8 @@ class Item
     public function setName($name)
     {
         $this->name = (string) $name;
+
+        return $this;
     }
 
     public function getName()
@@ -34,6 +38,8 @@ class Item
     public function setOrderNumber($orderNumber)
     {
         $this->orderNumber = (string) $orderNumber;
+
+        return $this;
     }
 
     public function getOrderNumber()
@@ -44,6 +50,8 @@ class Item
     public function setPrice($price)
     {
         $this->price = (float) $price;
+
+        return $this;
     }
 
     public function getPrice()
@@ -54,6 +62,8 @@ class Item
     public function setQuantity($quantity)
     {
         $this->quantity = (int) $quantity;
+
+        return $this;
     }
 
     public function getQuantity()
@@ -64,6 +74,8 @@ class Item
     public function setSku($sku)
     {
         $this->sku = (string) $sku;
+
+        return $this;
     }
 
     public function getSku()

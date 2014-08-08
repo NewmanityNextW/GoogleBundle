@@ -16,6 +16,8 @@ class Transaction
     public function setAffiliation($affiliation)
     {
         $this->affiliation = (string) $affiliation;
+
+        return $this;
     }
 
     public function getAffiliation()
@@ -26,6 +28,8 @@ class Transaction
     public function setCity($city)
     {
         $this->city = (string) $city;
+
+        return $this;
     }
 
     public function getCity()
@@ -36,6 +40,8 @@ class Transaction
     public function setCountry($country)
     {
         $this->country = (string) $country;
+
+        return $this;
     }
 
     public function getCountry()
@@ -46,6 +52,8 @@ class Transaction
     public function setOrderNumber($orderNumber)
     {
         $this->orderNumber = (string) $orderNumber;
+
+        return $this;
     }
 
     public function getOrderNumber()
@@ -56,6 +64,8 @@ class Transaction
     public function setShipping($shipping)
     {
         $this->shipping = (float) $shipping;
+
+        return $this;
     }
 
     public function getShipping()
@@ -66,6 +76,8 @@ class Transaction
     public function setState($state)
     {
         $this->state = (string) $state;
+
+        return $this;
     }
 
     public function getState()
@@ -76,6 +88,8 @@ class Transaction
     public function setTax($tax)
     {
         $this->tax = (float) $tax;
+
+        return $this;
     }
 
     public function getTax()
@@ -86,6 +100,8 @@ class Transaction
     public function setTotal($total)
     {
         $this->total = (float) $total;
+
+        return $this;
     }
 
     public function getTotal()

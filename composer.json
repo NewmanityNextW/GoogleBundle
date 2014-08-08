@@ -1,6 +1,6 @@
 {
-    "name": "meinfernbus/google-bundle",
-    "description": "Fork of AntiMattr GoogleBundle. Static Google maps with caching, Adwords with remarketing & lots of other fixes.",
+    "name": "newmanitynextw/google-bundle",
+    "description": "Fork of MeinFernbus GoogleBundle itself fork of AntiMattr. Static Google maps with externalized vars for caching and chainable functions.",
     "keywords": ["google", "analytics", "adwords", "maps", "antimattr"],
     "type": "symfony-bundle",
     "license": "MIT",

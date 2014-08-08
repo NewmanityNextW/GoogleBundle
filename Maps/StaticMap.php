@@ -6,12 +6,12 @@ class StaticMap extends AbstractMap
 {
     const API_ENDPOINT = 'http://maps.google.com/maps/api/staticmap?';
     const TYPE_ROADMAP = 'roadmap';
-    const CACHE_DIR = 'maps/';
-    const SUFFIX = '.png';
 
     protected $height;
     protected $width;
     protected $sensor = false;
+
+    protected $config = array();
 
     static protected $typeChoices = array(
         self::TYPE_ROADMAP => 'Road Map',
@@ -27,14 +27,23 @@ class StaticMap extends AbstractMap
         return array_key_exists($type, static::$typeChoices);
     }
 
+    public function setConfig(array $config)
+    {
+        $this->config = $config;
+    }
+
     public function setCenter($center)
     {
         $this->meta['center'] = (string) $center;
+
+        return $this;
     }
 
     public function setKey($key)
     {
         $this->meta['key'] = (string) $key;
+
+        return $this;
     }
 
     public function getCenter()
@@ -47,6 +56,8 @@ class StaticMap extends AbstractMap
     public function setHeight($height)
     {
         $this->height = (int) $height;
+
+        return $this;
     }
 
     public function getHeight()
@@ -57,6 +68,8 @@ class StaticMap extends AbstractMap
     public function setSensor($sensor)
     {
         $this->sensor = (bool) $sensor;
+
+        return $this;
     }
 
     public function getSensor()
@@ -74,6 +87,8 @@ class StaticMap extends AbstractMap
             $this->height = $arr[1];
         }
         $this->meta['size'] = $size;
+
+        return $this;
     }
 
     public function getSize()
@@ -93,6 +108,8 @@ class StaticMap extends AbstractMap
             throw new \InvalidArgumentException($type.' is not a valid Static Map Type.');
         }
         $this->meta['type'] = $type;
+
+        return $this;
     }
 
     public function getType()
@@ -105,6 +122,8 @@ class StaticMap extends AbstractMap
     public function setWidth($width)
     {
         $this->width = (int) $width;
+
+        return $this;
     }
 
     public function getWidth()
@@ -115,6 +134,8 @@ class StaticMap extends AbstractMap
     public function setZoom($zoom)
     {
         $this->meta['zoom'] = (int) $zoom;
+
+        return $this;
     }
 
     public function getZoom()
@@ -174,8 +195,7 @@ class StaticMap extends AbstractMap
         if (!empty($apiKey)) {
             $request .= '&key' . '=' . $apiKey;
         }
-
-	//var_dump('rootDir: ', $this->getUploadRootDir());die;
+        
         if (!is_dir($this->getUploadRootDir())) {
             mkdir($this->getUploadRootDir());
         }
@@ -183,10 +203,8 @@ class StaticMap extends AbstractMap
             $targetFilePath = $this->getAbsolutePath($targetFile);
             if (!file_exists($targetFilePath) || (filemtime($targetFilePath) + 86400) < time()) {
                 file_put_contents($targetFilePath, file_get_contents($prefix . $request));
-                $request = $cachePrefix . $this->getWebPath($targetFile);
-            } else {
-                $request = $cachePrefix . $this->getWebPath($targetFile);
             }
+            $request = $cachePrefix . $this->getWebPath($targetFile);
         } else {
             $request = $prefix . $request;
         }
@@ -197,16 +215,16 @@ class StaticMap extends AbstractMap
 
     protected function getAbsolutePath($filename)
     {
-        return $this->getUploadRootDir() . $filename . self::SUFFIX;
+        return $this->getUploadRootDir().$filename.$this->config['suffix'];
     }
 
     protected function getWebPath($filename)
     {
-        return '/' . self::CACHE_DIR . $filename . self::SUFFIX;
+        return '/'.$this->config['cache_dir'].$filename.$this->config['suffix'];
     }
 
     protected function getUploadRootDir()
     {
-        return __DIR__ . '/../../../../../../web/' . self::CACHE_DIR;
+        return $this->config['cache_base'].$this->config['cache_dir'];
     }
 }

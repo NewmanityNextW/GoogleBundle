@@ -11,6 +11,8 @@ class Marker
     public function setColor($color)
     {
         $this->meta['color'] = (string) $color;
+
+        return $this;
     }
 
     public function getColor()
@@ -23,6 +25,8 @@ class Marker
     public function setLabel($label)
     {
         $this->meta['label'] = (string) $label;
+
+        return $this;
     }
 
     public function getLabel()
@@ -35,6 +39,8 @@ class Marker
     public function setLatitude($latitude)
     {
         $this->latitude = (float) $latitude;
+
+        return $this;
     }
 
     public function getLatitude()
@@ -45,6 +51,8 @@ class Marker
     public function setLongitude($longitude)
     {
         $this->longitude = (float) $longitude;
+
+        return $this;
     }
 
     public function getLongitude()
@@ -60,6 +68,8 @@ class Marker
     public function setMeta(array $meta = array())
     {
         $this->meta = $meta;
+
+        return $this;
     }
 
     public function getMeta()

@@ -1,3 +1,5 @@
+This is a fork of GoogleBundle including externalized variables for caching, chainable functions and some minor optimizations.
+
 # GoogleBundle
 
 The GoogleBundle adds the ability to add various google-related services
@@ -5,10 +7,19 @@ to your application. These include Google Analytics, Adwords and Static Maps.
 
 ## Installation
 
-### Initialize Submodule
+### Add into your composer.json
 
-```sh
-    git submodule add git@github.com:antimattr/GoogleBundle.git src/AntiMattr/GoogleBundle
+```json
+    "repositories": [
+        {
+            "url": "https://github.com/NewmanityNextW/GoogleBundle",
+            "type": "git"
+        }
+    ],
+    [...]
+    "require": {
+        "newmanitynextw/google-bundle": "dev-master"
+    },
 ```
 
 ### Application Kernel
@@ -163,6 +174,9 @@ google:
     maps:
         config:
             key: YOUR-API-KEY-FROM-GOOGLE
+            cache_base: %kernel.root_dir%/../web/
+            cache_dir: maps/
+            suffix: .png
 ```
 
 Get your key at https://code.google.com/apis/console/
@@ -178,11 +192,11 @@ Get your key at https://code.google.com/apis/console/
     /** @var \AntiMattr\GoogleBundle\MapsManager $googleContainer */
     $googleContainer = $this->container->get('google.maps');
     $map = $googleContainer->createStaticMap();
-    $map->setId("Paul");
-    $map->setSize("512x512");
-    $marker = new Marker();
-    $marker->setLatitude(40.596631);
-    $marker->setLongitude(-73.972359);
+    $map->setId("Paul")
+    ->setSize("512x512");
+    $marker = (new Marker)
+    ->setLatitude(40.596631)
+    ->setLongitude(-73.972359);
     $map->addMarker($marker);
     $googleContainer->addMap($map);
 ```
@@ -199,4 +213,12 @@ Include the Google Maps in your template like this:
 			{% endautoescape %}
 		{% endfor %}
 	{% endif %}
+```
+
+You can also display your own map ID like this:
+
+```twig
+    {% autoescape false %}
+        {{ google_maps.getMapById('Paul').render }}
+    {% endautoescape %}
 ```

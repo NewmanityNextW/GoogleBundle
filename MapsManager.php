@@ -18,6 +18,8 @@ class MapsManager
     public function setKey($key)
     {
         $this->config['key'] = $key;
+
+        return $this;
     }
 
     public function getKey()
@@ -29,10 +31,7 @@ class MapsManager
 
     public function hasMaps()
     {
-        if (!empty($this->maps)) {
-            return true;
-        }
-        return false;
+        return !empty($this->maps);
     }
 
     public function hasMap(MapInterface $map)
@@ -47,6 +46,8 @@ class MapsManager
     public function addMap(MapInterface $map)
     {
         $this->maps[] = $map;
+
+        return $this;
     }
 
     public function createStaticMap()
@@ -55,6 +56,9 @@ class MapsManager
         if (isset($this->config['key'])) {
             $map->setKey($this->config['key']);
         }
+
+        // We need to pass the config array so we can access %cache_dir% and %suffix%
+        $map->setConfig($this->config);
 
         return $map;
     }
@@ -75,6 +79,8 @@ class MapsManager
     public function setMaps($maps)
     {
         $this->maps = $maps;
+
+        return $this;
     }
 
     public function getMaps()
@@ -84,7 +90,8 @@ class MapsManager
 
     public function getMapById($id)
     {
-        foreach ($this->maps as $map) {
+        foreach ($this->maps as $map)
+        {
             if ($id == $map->getId()) {
                 return $map;
             }

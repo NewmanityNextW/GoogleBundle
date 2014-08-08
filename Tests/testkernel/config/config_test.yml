@@ -20,6 +20,11 @@ twig:
     strict_variables: false
 
 google:
+    maps:
+        config:
+            cache_base: %kernel.root_dir%/../web/
+            cache_dir: maps/
+            suffix: .png
     analytics:
         trackers:
             default:
