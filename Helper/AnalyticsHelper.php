@@ -44,6 +44,11 @@ class AnalyticsHelper extends Helper
         return "";
     }
 
+    public function getTrackerNamePlain($trackerKey)
+    {
+        return $this->analytics->getTrackerName($trackerKey);
+    }
+
     public function getSiteSpeedSampleRate($trackerKey)
     {
         return $this->analytics->getSiteSpeedSampleRate($trackerKey);

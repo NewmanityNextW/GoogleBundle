@@ -1,47 +1,40 @@
-<script type="text/javascript">
+<script>
+    if (AntiMattr == null || typeof(AntiMattr) != 'object') { var AntiMattr = window.AntiMattr = {}; }
+    AntiMattr.GoogleAnalytics = {};
 
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-if (AntiMattr == null || typeof(AntiMattr) != 'object') { var AntiMattr = window.AntiMattr = {}; }
-AntiMattr.GoogleAnalytics = {};
-
-AntiMattr.GoogleAnalytics.notifyEvent = function(tracker, category, action, label, value) {
-    var params = ['send', 'event', category, action];
-    if (typeof label != 'undefined') {
-        params.push(label);
-        if (typeof value != 'undefined') {
-            params.push(value);
+    AntiMattr.GoogleAnalytics.notifyEvent = function(tracker, category, action, label, value) {
+        var parameters = [tracker + 'send', 'event', category, action];
+        if (typeof label != 'undefined') {
+            parameters.push(label);
+            if (typeof value != 'undefined') {
+                parameters.push(value);
+            }
         }
-    }
-    ga.apply(window, params);
-};
 
-var _ga_create_params = [],
-    _ga_init_queue = [];
+        ga.apply(ga, parameters);
+    };
 
-{% for key, tracker in google_analytics.trackers %}
-    _ga_create_params.push('create');
-    _ga_create_params.push('{{ tracker.accountId }}');
-    _ga_create_params.push('auto');
+    {% for key, tracker in google_analytics.trackers %}
+    ga('create', '{{ tracker.accountId }}', {
+        {% if tracker.domain %}
+        'cookieName': '{{ tracker.domain }}',
+        {% endif -%}
 
-    {% if tracker.domain %}
-
-        {% if google_analytics.getAllowLinker(key) %}
-            _ga_create_params.push({'allowLinker': true});
-            _ga_init_queue.push(['require', 'linker']);
-
-            {% if google_analytics.getAllowAnchor(key) %}
-                _ga_init_queue.push(['linker:autoLink', ['{{ tracker.domain }}'], true]);
-            {% else %}
-                _ga_init_queue.push(['linker:autoLink', ['{{ tracker.domain }}']]);
-            {% endif %}
-
+        {% set siteSpeedSampleRate = google_analytics.getSiteSpeedSampleRate(key) %}
+        {% if siteSpeedSampleRate is defined and siteSpeedSampleRate is not null %}
+        'siteSpeedSampleRate': {{ siteSpeedSampleRate }},
         {% endif %}
 
-    {% endif %}
+        'allowAnchor': {% if google_analytics.getAllowAnchor(key) %}true{% else %}false{% endif %},
+        'allowLinker': {% if google_analytics.getAllowLinker(key) %}true{% else %}false{% endif %},
+
+        'name': '{{ google_analytics.trackerNamePlain(key) }}'
+    });
 
     {% if google_analytics.getAnonymizeIp(key) %}
         _gaq.push (['_gat._anonymizeIp']);
@@ -49,75 +42,58 @@ var _ga_create_params = [],
 
 
     {% if google_analytics.hasCustomVariables %}
-        {% for customVariable in google_analytics.customVariables %}
-            _ga_init_queue.push(['set', 'dimension'+{{ customVariable.index }}, '{{ customVariable.value }}']);
-        {% endfor %}
+    {% for customVariable in google_analytics.customVariables %}
+    ga('{{ google_analytics.trackerName(key) }}set', 'dimension{{ customVariable.index }}', '{{ customVariable.value }}');
+    {% endfor %}
     {% endif %}
 
-
     {% if google_analytics.hasPageViewQueue %}
-        {% for pageView in google_analytics.pageViewQueue %}
-            _ga_init_queue.push(['send', 'pageview', '{{ pageView }}']);
-        {% endfor %}
+    {% for pageView in google_analytics.pageViewQueue %}
+    ga('{{ google_analytics.trackerName(key) }}send', 'pageview', '{{ pageview }}');
+    {% endfor %}
     {% endif %}
 
     {% if google_analytics.hasCustomPageView %}
-        _ga_create_params.push(['{{ google_analytics.trackerName(key) }}_trackPageview', '{{ google_analytics.getCustomPageView() | raw }}']);
-        _ga_init_queue.push(['send', 'pageview', '{{ google_analytics.getCustomPageView() | raw }}']);
+    ga('{{ google_analytics.trackerName(key) }}send', 'pageview', '{{ google_analytics.getCustomPageView() | raw }}');
     {% else %}
-        if (window.location.hash) {
-            _gaq.push(['{{ google_analytics.trackerName(key) }}_trackPageview', {{ google_analytics.getRequestUri() | json_encode | raw }} + window.location.hash]);
-        } else {
-            _gaq.push(['{{ google_analytics.trackerName(key) }}_trackPageview', {{ google_analytics.getRequestUri() | json_encode | raw }}]);
-        }
+    ga('{{ google_analytics.trackerName(key) }}send', 'pageview');
     {% endif %}
 
     {% if google_analytics.isTransactionValid %}
-        {% set transaction = google_analytics.transaction %}
-        _ga_init_queue.push(['require', 'ecommerce', 'ecommerce.js']);
-        _ga_init_queue.push(['ecommerce:addTransaction', {
-            'id': '{{ transaction.orderNumber | escape('js') }}',
-            'affiliation': '{{ transaction.affiliation | escape('js') }}',
-            'revenue': '{{ transaction.total | escape('js') }}',
-            'shipping': '{{ transaction.shipping | escape('js') }}',
-            'tax': '{{ transaction.tax | escape('js') }}'
-        }]);
+    ga('{{ google_analytics.trackerName(key) }}require', 'ecommerce');
 
-        {% if google_analytics.hasItems %}
-            {% for item in google_analytics.items %}
-                _ga_init_queue.push(['ecommerce:addItem', {
-                    'id': '{{ item.orderNumber | escape('js') }}',
-                    'name': '{{ item.name | escape('js') }}',
-                    'sku': '{{ item.sku | escape('js') }}',
-                    'category': '{{ item.category | escape('js') }}',
-                    'price': '{{ item.price | escape('js') }}',
-                    'quantity': '{{ item.quantity | escape('js') }}'
-                }]);
-            {% endfor %}
-        {% endif %}
+    {% set transaction = google_analytics.transaction %}
+    ga('{{ google_analytics.trackerName(key) }}ecommerce:addTransaction', {
+        'id': '{{ transaction.orderNumber | escape('js') }}',
+        'affiliation': '{{ transaction.affiliation | escape('js') }}',
+        'revenue': '{{ transaction.total | escape('js') }}',
+        'shipping': '{{ transaction.shipping | escape('js') }}',
+        'tax': '{{ transaction.tax | escape('js') }}'
+    });
 
-        _ga_init_queue.push('ecommerce:send');
-
+    {% if google_analytics.hasItems %}
+    {% for item in google_analytics.items %}
+    ga('{{ google_analytics.trackerName(key) }}ecommerce:addItem', {
+        'id': '{{ item.orderNumber | escape('js') }}',
+        'name': '{{ item.name | escape('js') }}',
+        'sku': '{{ item.sku | escape('js') }}',
+        'category': '{{ item.category | escape('js') }}',
+        'price': '{{ item.price | escape('js') }}',
+        'quantity': '{{ item.quantity | escape('js') }}'
+    });
+    {% endfor %}
     {% endif %}
 
-    ga.apply(window, _ga_create_params); //initialize tracker
-
-    for (it in _ga_init_queue) ga.apply(window, _ga_init_queue[it]); // run additional initializing code 
+    ga('{{ google_analytics.trackerName(key) }}ecommerce:send');
+    {% endif %}
 
     {% if google_analytics.hasEventQueue %}
-
-        {% for event in google_analytics.eventQueue %}
-            AntiMattr.GoogleAnalytics.notifyEvent(
-                  '{{ google_analytics.trackerName(key) }}'
-                , '{{ event.category }}'
-                , '{{ event.action }}'
-                {% if event.label is not null %}, '{{ event.label }}'{% endif %}
-                {% if event.value is not null %}, {{ event.value }}{% endif %}
-            );
-        {% endfor %}
-
+    {% for event in google_analytics.eventQueue %}
+    ga('send', 'event', '{{ event.category }}', '{{ event.action }}'
+            {%- if event.label is not null %}, '{{ event.label }}'{% endif -%}
+            {%- if event.label is not null and event.value is not null %}, {{ event.value }}{% endif -%}
+    );
+    {% endfor %}
     {% endif %}
-
-{% endfor %}
-
+    {% endfor %}
 </script>
