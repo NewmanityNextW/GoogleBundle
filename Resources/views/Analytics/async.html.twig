@@ -36,11 +36,6 @@
         'name': '{{ google_analytics.trackerNamePlain(key) }}'
     });
 
-    {% if google_analytics.getAnonymizeIp(key) %}
-        _gaq.push (['_gat._anonymizeIp']);
-    {% endif %}
-
-
     {% if google_analytics.hasCustomVariables %}
     {% for customVariable in google_analytics.customVariables %}
     ga('{{ google_analytics.trackerName(key) }}set', 'dimension{{ customVariable.index }}', '{{ customVariable.value }}');
